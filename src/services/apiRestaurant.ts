@@ -1,3 +1,5 @@
+import CartIterface from "../interface/cartInterface";
+
 const API_URL = 'https://react-fast-pizza-api.onrender.com/api';
 
 export async function getMenu() {
@@ -10,7 +12,7 @@ export async function getMenu() {
   return data;
 }
 
-export async function getOrder(id) {
+export async function getOrder(id:number) {
   const res = await fetch(`${API_URL}/order/${id}`);
   if (!res.ok) throw Error(`Couldn't find order #${id}`);
 
@@ -18,7 +20,7 @@ export async function getOrder(id) {
   return data;
 }
 
-export async function createOrder(newOrder) {
+export async function createOrder(newOrder:CartIterface) {
   try {
     const res = await fetch(`${API_URL}/order`, {
       method: 'POST',
@@ -36,19 +38,19 @@ export async function createOrder(newOrder) {
   }
 }
 
-export async function updateOrder(id, updateObj) {
-  try {
-    const res = await fetch(`${API_URL}/order/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(updateObj),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+// export async function updateOrder(id, updateObj) {
+//   try {
+//     const res = await fetch(`${API_URL}/order/${id}`, {
+//       method: 'PATCH',
+//       body: JSON.stringify(updateObj),
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     });
 
-    if (!res.ok) throw Error();
-    // We don't need the data, so we don't return anything
-  } catch (err) {
-    throw Error('Failed updating your order');
-  }
-}
+//     if (!res.ok) throw Error();
+//     // We don't need the data, so we don't return anything
+//   } catch (err) {
+//     throw Error('Failed updating your order');
+//   }
+// }
