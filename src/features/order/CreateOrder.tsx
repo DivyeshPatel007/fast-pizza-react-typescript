@@ -1,12 +1,13 @@
 // import { useState } from "react";
 
-import { Form, useActionData, redirect, useNavigation } from "react-router-dom";
-import { createOrder } from "../../services/apiRestaurant";
-import Button from "../../ui/Button";
 import { useSelector } from "react-redux";
-import { getCart } from "../cart/cartSlice";
+import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
+import { NewOrder } from "../../interface/orderInterface";
+import { createOrder } from "../../services/apiRestaurant";
 import { RootState } from "../../store/store";
+import Button from "../../ui/Button";
 import { formatCurrency } from "../../utils/helpers";
+import { getCart } from "../cart/cartSlice";
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) =>
@@ -171,16 +172,24 @@ type OrderFormData = {
   priority?: string;
   cart: string;
 };
-
+// interface NewOrder {
+//   cart: Menu[];
+//   address: string;
+//   customer: string;
+//   phone: string;
+//   position?: string;
+//   priority: boolean;
+// }
 export async function action({ request }: RequestAction) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData) as OrderFormData;
-  const order = {
+  const order: NewOrder = {
     ...data,
     cart: JSON.parse(data.cart),
     priority: data.priority === "on",
   };
 
+  console.log("Order", order);
   const errors: Errors = {};
 
   if (!isValidPhone(order.phone))

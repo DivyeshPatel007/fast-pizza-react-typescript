@@ -4,4 +4,6 @@ export default interface CartIterface {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+  addIngredients?:[];
+  removeIngredients?:[];
 }

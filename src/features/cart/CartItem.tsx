@@ -12,7 +12,6 @@ function CartItem({ item }: { item: CartIterface }) {
     getCurrentQuantityById(pizzaId)
   );
 
-  console.log(pizzaId);
   return (
     <li className="py-3 sm:flex sm:items-center sm:justify-between">
       <p className="mb-1 sm:mb-0">

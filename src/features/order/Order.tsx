@@ -1,24 +1,32 @@
+/* eslint-disable react-refresh/only-export-components */
 // Test ID: IIDSAT
 import {
   ActionFunctionArgs,
+  LoaderFunction,
   ParamParseKey,
   Params,
-  useLoaderData,
 } from "react-router-dom";
+import { useFetcher, useLoaderData } from "react-router-dom";
+import { OrderBackend } from "../../interface/orderInterface";
 import { getOrder } from "../../services/apiRestaurant";
 import {
   calcMinutesLeft,
   formatCurrency,
   formatDate,
 } from "../../utils/helpers";
-import OrderInterface from "../../interface/orderInterface";
 import OrderItem from "./OrderItem";
-
-
-
+import { useEffect } from "react";
 
 function Order() {
-  const order = useLoaderData() as OrderInterface;
+  const order = useLoaderData() as OrderBackend;
+  const fetcher = useFetcher();
+
+  useEffect(() => {
+    if (!fetcher.data && fetcher.state === "idle") {
+      fetcher.load("/menu");
+      console.log("fetcher", fetcher.data);
+    }
+  }, [fetcher]);
   // Everyone can search for all orders, so for privacy reasons we're gonna gonna exclude names or address, these are only for the restaurant staff
   const {
     id,
@@ -29,7 +37,6 @@ function Order() {
     estimatedDelivery,
     cart,
   } = order;
-  console.log("ORDER",order);
   const deliveryIn = calcMinutesLeft(estimatedDelivery);
 
   return (
@@ -62,8 +69,12 @@ function Order() {
 
       <ul className="dive-stone-200 divide-y border-b border-t">
         {cart.map((item) => (
-          <OrderItem item={item} key={item.id} />
-
+          <OrderItem
+            item={item}
+            key={item.pizzaId}
+            isLoadingIngredients={fetcher.state === "loading"}
+            ingredients={[]}
+          />
         ))}
       </ul>
 
@@ -83,15 +94,17 @@ function Order() {
     </div>
   );
 }
+
 const PathNames = {
   orderDetail: "/order/:orderId",
 } as const;
+
 interface Args extends ActionFunctionArgs {
   params: Params<ParamParseKey<typeof PathNames.orderDetail>>;
 }
-export async function loader({ params }: Args) {
+export const loader: LoaderFunction = async ({ params }: Args) => {
   const order = await getOrder(params.orderId);
   return order;
-}
+};
 
 export default Order;
